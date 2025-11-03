@@ -351,6 +351,9 @@
                 }
 
                 this.updateWaitingTimes();
+                console.log('Patient added:', patient);
+                console.log('Emergency queue:', this.emergencyQueue);
+                console.log('Regular queue:', this.regularQueue);
                 return patient;
             }
 
@@ -526,13 +529,19 @@
             const type = document.getElementById('patientType').value;
             const symptoms = document.getElementById('symptoms').value;
 
-            queue.addPatient(name, age, type, symptoms);
+            const addedPatient = queue.addPatient(name, age, type, symptoms);
+            
+            // Force re-render
             renderQueues();
 
+            // Reset form
             e.target.reset();
-            alert(Appointment booked for ${name}!\nEstimated wait time: ${queue.regularQueue.concat(queue.emergencyQueue).find(p => p.name === name)?.waitingTime || 0} minutes);
+            
+            // Show confirmation
+            alert(Appointment booked for ${name}!\nType: ${type.toUpperCase()}\nEstimated wait time: ${addedPatient.waitingTime} minutes);
         });
 
+        // Initial render
         renderQueues();
     </script>
 </body>
