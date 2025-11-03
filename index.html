@@ -495,7 +495,7 @@
             
             if (patient) {
                 queue.cancelPatient(id);
-                alert(`Now serving: ${patient.name}\nType: ${patient.type.toUpperCase()}\nSymptoms: ${patient.symptoms}`);
+                alert(Now serving: ${patient.name}\nType: ${patient.type.toUpperCase()}\nSymptoms: ${patient.symptoms});
                 renderQueues();
             }
         }
@@ -530,7 +530,7 @@
             renderQueues();
 
             e.target.reset();
-            alert(`Appointment booked for ${name}!\nEstimated wait time: ${queue.regularQueue.concat(queue.emergencyQueue).find(p => p.name === name)?.waitingTime || 0} minutes`);
+            alert(Appointment booked for ${name}!\nEstimated wait time: ${queue.regularQueue.concat(queue.emergencyQueue).find(p => p.name === name)?.waitingTime || 0} minutes);
         });
 
         renderQueues();
