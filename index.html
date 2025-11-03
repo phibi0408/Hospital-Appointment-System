@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Appointment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .queue-section {
+            margin-top: 20px;
+        }
+
+        .patient-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .patient-card:hover {
+            transform: translateX(5px);
+        }
+
+        .patient-info {
+            flex-grow: 1;
+        }
+
+        .patient-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .patient-details {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .priority-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .priority-critical {
+            background: #ff4444;
+            color: white;
+            border-left-color: #ff4444 !important;
+        }
+
+        .priority-serious {
+            background: #ff9800;
+            color: white;
+            border-left-color: #ff9800 !important;
+        }
+
+        .priority-mild {
+            background: #ffc107;
+            color: white;
+            border-left-color: #ffc107 !important;
+        }
+
+        .priority-regular {
+            background: #4caf50;
+            color: white;
+            border-left-color: #4caf50 !important;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .btn-cancel {
+            background: #ff4444;
+        }
+
+        .btn-reschedule {
+            background: #2196F3;
+        }
+
+        .btn-serve {
+            background: #4caf50;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .waiting-time {
+            color: #764ba2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 Hospital Appointment System</h1>
+            <p class="subtitle">Efficient Patient Queue Management</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPatients">0</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="emergencyCount">0</div>
+                <div class="stat-label">Emergency Cases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgWaitTime">0 min</div>
+                <div class="stat-label">Avg Wait Time</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2>📝 Book Appointment</h2>
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label for="patientName">Patient Name</label>
+                        <input type="text" id="patientName" required placeholder="Enter patient name">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientAge">Age</label>
+                        <input type="number" id="patientAge" required placeholder="Enter age" min="1" max="120">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientType">Patient Type</label>
+                        <select id="patientType" required>
+                            <option value="regular">Regular Appointment</option>
+                            <option value="critical">Emergency - Critical</option>
+                            <option value="serious">Emergency - Serious</option>
+                            <option value="mild">Emergency - Mild</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms</label>
+                        <input type="text" id="symptoms" required placeholder="Brief description of symptoms">
+                    </div>
+                    <button type="submit">Add Patient to Queue</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>⚡ Emergency Queue (Priority)</h2>
+                <div id="emergencyQueue" class="queue-section">
+                    <div class="empty-state">No emergency patients</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Regular Queue (FIFO)</h2>
+            <div id="regularQueue" class="queue-section">
+                <div class="empty-state">No regular patients</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AVG_CONSULTATION_TIME = 15; // minutes
+
+        class PatientQueue {
+            constructor() {
+                this.emergencyQueue = [];
+                this.regularQueue = [];
+                this.patientIdCounter = 1;
+            }
+
+            addPatient(name, age, type, symptoms) {
+                const patient = {
+                    id: this.patientIdCounter++,
+                    name,
+                    age,
+                    type,
+                    symptoms,
+                    arrivalTime: new Date(),
+                    waitingTime: 0
+                };
+
+                if (type === 'regular') {
+                    this.regularQueue.push(patient);
+                } else {
+                    this.emergencyQueue.push(patient);
+                    this.emergencyQueue.sort((a, b) => {
+                        const priority = { critical: 3, serious: 2, mild: 1 };
+                        if (priority[b.type] !== priority[a.type]) {
+                            return priority[b.type] - priority[a.type];
+                        }
+                        return a.arrivalTime - b.arrivalTime;
+                    });
+                }
+
+                this.updateWaitingTimes();
+                console.log('Patient added:', patient);
+                console.log('Emergency queue:', this.emergencyQueue);
+                console.log('Regular queue:', this.regularQueue);
+                return patient;
+            }
+
+            serveNextPatient() {
+                let patient;
+                if (this.emergencyQueue.length > 0) {
+                    patient = this.emergencyQueue.shift();
+                } else if (this.regularQueue.length > 0) {
+                    patient = this.regularQueue.shift();
+                }
+
+                if (patient) {
+                    this.updateWaitingTimes();
+                }
+                return patient;
+            }
+
+            cancelPatient(id) {
+                this.emergencyQueue = this.emergencyQueue.filter(p => p.id !== id);
+                this.regularQueue = this.regularQueue.filter(p => p.id !== id);
+                this.updateWaitingTimes();
+            }
+
+            reschedulePatient(id, newType) {
+                let patient = this.emergencyQueue.find(p => p.id === id) || 
+                             this.regularQueue.find(p => p.id === id);
+                
+                if (patient) {
+                    this.cancelPatient(id);
+                    this.addPatient(patient.name, patient.age, newType, patient.symptoms);
+                }
+            }
+
+            updateWaitingTimes() {
+                let time = 0;
+                
+                this.emergencyQueue.forEach(patient => {
+                    patient.waitingTime = time;
+                    time += AVG_CONSULTATION_TIME;
+                });
+
+                this.regularQueue.forEach(patient => {
+                    patient.waitingTime = time;
+                    time += AVG_CONSULTATION_TIME;
+                });
+            }
+
+            getTotalPatients() {
+                return this.emergencyQueue.length + this.regularQueue.length;
+            }
+
+            getEmergencyCount() {
+                return this.emergencyQueue.length;
+            }
+
+            getAverageWaitTime() {
+                const total = this.getTotalPatients();
+                if (total === 0) return 0;
+                
+                const totalWait = [...this.emergencyQueue, ...this.regularQueue]
+                    .reduce((sum, p) => sum + p.waitingTime, 0);
+                
+                return Math.round(totalWait / total);
+            }
+        }
+
+        const queue = new PatientQueue();
+
+        function renderQueues() {
+            renderEmergencyQueue();
+            renderRegularQueue();
+            updateStats();
+        }
+
+        function renderEmergencyQueue() {
+            const container = document.getElementById('emergencyQueue');
+            
+            if (queue.emergencyQueue.length === 0) {
+                container.innerHTML = '<div class="empty-state">No emergency patients</div>';
+                return;
+            }
+
+            container.innerHTML = queue.emergencyQueue.map(patient => `
+                <div class="patient-card priority-${patient.type}">
+                    <div class="patient-info">
+                        <div class="patient-name">
+                            <span class="priority-badge">${patient.type.toUpperCase()}</span>
+                            ${patient.name} (${patient.age}yo)
+                        </div>
+                        <div class="patient-details">
+                            ${patient.symptoms} | 
+                            <span class="waiting-time">Wait: ${patient.waitingTime} min</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-small btn-serve" onclick="servePatient(${patient.id})">Serve</button>
+                        <button class="btn-small btn-reschedule" onclick="reschedule(${patient.id})">Reschedule</button>
+                        <button class="btn-small btn-cancel" onclick="cancelPatient(${patient.id})">Cancel</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRegularQueue() {
+            const container = document.getElementById('regularQueue');
+            
+            if (queue.regularQueue.length === 0) {
+                container.innerHTML = '<div class="empty-state">No regular patients</div>';
+                return;
+            }
+
+            container.innerHTML = queue.regularQueue.map(patient => `
+                <div class="patient-card priority-regular">
+                    <div class="patient-info">
+                        <div class="patient-name">
+                            <span class="priority-badge">REGULAR</span>
+                            ${patient.name} (${patient.age}yo)
+                        </div>
+                        <div class="patient-details">
+                            ${patient.symptoms} | 
+                            <span class="waiting-time">Wait: ${patient.waitingTime} min</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-small btn-serve" onclick="servePatient(${patient.id})">Serve</button>
+                        <button class="btn-small btn-reschedule" onclick="reschedule(${patient.id})">Reschedule</button>
+                        <button class="btn-small btn-cancel" onclick="cancelPatient(${patient.id})">Cancel</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalPatients').textContent = queue.getTotalPatients();
+            document.getElementById('emergencyCount').textContent = queue.getEmergencyCount();
+            document.getElementById('avgWaitTime').textContent = queue.getAverageWaitTime() + ' min';
+        }
+
+        function servePatient(id) {
+            const patient = queue.emergencyQueue.find(p => p.id === id) || 
+                          queue.regularQueue.find(p => p.id === id);
+            
+            if (patient) {
+                queue.cancelPatient(id);
+                alert(Now serving: ${patient.name}\nType: ${patient.type.toUpperCase()}\nSymptoms: ${patient.symptoms});
+                renderQueues();
+            }
+        }
+
+        function cancelPatient(id) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                queue.cancelPatient(id);
+                renderQueues();
+            }
+        }
+
+        function reschedule(id) {
+            const newType = prompt('Enter new patient type:\n- regular\n- critical\n- serious\n- mild');
+            
+            if (newType && ['regular', 'critical', 'serious', 'mild'].includes(newType.toLowerCase())) {
+                queue.reschedulePatient(id, newType.toLowerCase());
+                renderQueues();
+            } else if (newType) {
+                alert('Invalid patient type. Please use: regular, critical, serious, or mild');
+            }
+        }
+
+        document.getElementById('appointmentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('patientName').value;
+            const age = document.getElementById('patientAge').value;
+            const type = document.getElementById('patientType').value;
+            const symptoms = document.getElementById('symptoms').value;
+
+            const addedPatient = queue.addPatient(name, age, type, symptoms);
+            
+            // Force re-render
+            renderQueues();
+
+            // Reset form
+            e.target.reset();
+            
+            // Show confirmation
+            alert(Appointment booked for ${name}!\nType: ${type.toUpperCase()}\nEstimated wait time: ${addedPatient.waitingTime} minutes);
+        });
+
+        // Initial render
+        renderQueues();
+    </script>
+</body>
+</html>
